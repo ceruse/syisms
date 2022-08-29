@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 require("dotenv").config();
 
@@ -26,10 +27,10 @@ app.use('/api', function(req, res) {
 });
 
 // 리액트 정적 파일 제공
-app.use(express.static(path.join(__dirname, "./build")));
+app.use(express.static(path.join(__dirname, "/build")));
 // 라우트 설정
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, './build', 'index.html'));
+    res.sendFile(path.join(__dirname, '/build', 'index.html'));
 });
 
 // API
