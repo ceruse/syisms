@@ -19,6 +19,11 @@ const SalesRouter = require('./routes/Sales');
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "/build")));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/build', 'index.html'));
+  });
 
 // API
 app.use('/api/auth', authRouter);
