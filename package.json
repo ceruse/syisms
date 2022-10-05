@@ -23,9 +23,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run heroku-postbuild\"",
-    "server": "node app.js",
-    "heroku-postbuild": "cd front && npm install && npm run build"
+    "start":"concurrently \"npm run server\" \"npm run heroku-postbuild\"",
+    "server":"node app.js",
+    "heroku-postbuild":"cd front && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
