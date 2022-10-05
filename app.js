@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
-const path = require('path');
 
 require("dotenv").config();
 
@@ -14,11 +13,6 @@ const MoveRouter = require('./routes/Move');
 const ClientRouter = require('./routes/Client');
 const SalesRouter = require('./routes/Sales');
 
-// 빌드설정
-app.use(express.static(path.join(__dirname, "client/build")));
-app.get('*', (req, res) => {
-res.sendFile(path.join(__dirname, '/client/build/index.html'));
-});
 
 
 // Middlewares
@@ -37,10 +31,7 @@ app.use('/api/Client', ClientRouter);
 app.use('/api/Sales', SalesRouter);
 
 // Server
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 3001
 
-app.get('*', function (req, res) {
-    const index = path.join(__dirname, 'build', 'index.html');
-    res.sendFile(index);
-  });
+app.get('/', (req, res) => res.send('Welcome'));
 app.listen(port, () => console.log(`Server running on port ${port}`));
