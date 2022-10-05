@@ -31,7 +31,7 @@ app.use('/api/Client', ClientRouter);
 app.use('/api/Sales', SalesRouter);
 
 // Server
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 5000
 
 app.get('/', (req, res) => res.send('Welcome'));
 app.listen(port, () => console.log(`Server running on port ${port}`));
