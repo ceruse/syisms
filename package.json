@@ -23,10 +23,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "nodemon app.js",
-    "client": "cd front && npm start"
+    "start": "concurrently \"npm run server\" \"npm run heroku-postbuild\"",
+    "server": "node app.js",
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
@@ -36,3 +35,5 @@
     "http-proxy-middleware": "^2.0.6"
   }
 }
+
+
