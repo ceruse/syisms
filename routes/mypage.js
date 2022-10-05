@@ -7,6 +7,7 @@ const validate = require('../middleware/validate');
 
 // DB
 const pool = require('../middleware/pool');
+
 // 정보 조회
 router.get('/select', validate.isLoggedin, async (req, res) => {
    try {
@@ -16,7 +17,7 @@ router.get('/select', validate.isLoggedin, async (req, res) => {
          UserName: User[0][0].UserName,
          UserInfo: User[0][0].UserInfo,
          UserAddress: User[0][0].UserAddress,
-            UserPhonenumber: User[0][0].UserPhonenumber,
+         UserPhonenumber: User[0][0].UserPhonenumber,
          UserType:User[0][0].UserType,
          UserCode:User[0][0].UserCode,
       });
@@ -26,7 +27,7 @@ router.get('/select', validate.isLoggedin, async (req, res) => {
 });
 
 
-//정보 수정
+// 정보 수정
 router.put('/update', validate.isLoggedin, async (req, res) => {
    let con1 = await pool.getConnection(async (conn) => conn);
  
@@ -52,7 +53,7 @@ router.put('/update', validate.isLoggedin, async (req, res) => {
  
  });
 
- //정보 수정 (Product 정보)
+ // 물품의 정보를 수정
 router.put('/updateProduct', validate.isLoggedin, async (req, res) => {
    let con1 = await pool.getConnection(async (conn) => conn);
           try {
@@ -70,7 +71,7 @@ router.put('/updateProduct', validate.isLoggedin, async (req, res) => {
        })
 
 
-//정보 삭제
+// 회원 정보 삭제
 router.delete('/b', validate.isLoggedin, async (req, res) => {
    let con1 = await pool.getConnection(async conn => conn)
 

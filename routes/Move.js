@@ -54,7 +54,7 @@ router.post('/addMoveOutput', validate.isLoggedin, async (req, res) => {
     }
 });
 
-// 출고 1차 등록
+// 출고 최초 등록 완료 시 일부 내용 업데이트
 router.put('/updateoutputConfirm', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -71,6 +71,7 @@ router.put('/updateoutputConfirm', validate.isLoggedin, async (req, res) => {
     }
 });
 
+// 출고 대기 상태로 완료
 router.put('/updatemoveoutputConfirm', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -104,6 +105,7 @@ router.delete('/deleteoutputConfirm', validate.isLoggedin, async (req, res) => {
     }
 });
 
+// 출고 취소시 담긴 물품의 정보도 함께 삭제
 router.delete('/deletemoveoutputConfirm', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -120,7 +122,7 @@ router.delete('/deletemoveoutputConfirm', validate.isLoggedin, async (req, res) 
     }
 });
 
-// 취소, 다른 창으로 벗어날 시 기존 저장된 테이블 삭제.
+// 취소 혹은 다른 창으로 벗어날 시 기존 저장된 출고 정보 삭제.
 router.delete('/deleteinfo', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -137,6 +139,7 @@ router.delete('/deleteinfo', validate.isLoggedin, async (req, res) => {
     }
 });
 
+// 취소 혹은 다른 창으로 벗어날 시 기존 저장된 출고 물품 삭제.
 router.delete('/deletemoveoutputinfo', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -153,7 +156,7 @@ router.delete('/deletemoveoutputinfo', validate.isLoggedin, async (req, res) => 
     }
 });
 
-// 출고 등록
+// 출고 최종 물품 확인
 router.put('/finalmoveoutputConfirm', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -170,6 +173,7 @@ router.put('/finalmoveoutputConfirm', validate.isLoggedin, async (req, res) => {
     }
 });
 
+// 출고 최종 확인
 router.put('/finalConfirm', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -186,7 +190,7 @@ router.put('/finalConfirm', validate.isLoggedin, async (req, res) => {
     }
 });
 
-//입고 대상 리스트
+//입고 대상 리스트 출력
 router.get('/moveinputlist', validate.isLoggedin, async (req, res) => {
    try {
       const input = await pool.query("select * from moveinput where UserID =? and Confirm IS NULL", req.decoded.UserID);
@@ -196,7 +200,7 @@ router.get('/moveinputlist', validate.isLoggedin, async (req, res) => {
    }
 });
 
-//출고 대상 리스트
+//출고 대상 리스트 출력
 router.get('/moveoutputlist', validate.isLoggedin, async (req, res) => {
    try {
       const output = await pool.query("select * from moveoutput where UserID =? and Confirm IS NULL", req.decoded.UserID);
@@ -206,7 +210,7 @@ router.get('/moveoutputlist', validate.isLoggedin, async (req, res) => {
    }
 });
 
-//출고 내역 리스트
+//출고 내역 리스트 출력
 router.get('/outputlist', validate.isLoggedin, async (req, res) => {
    try {
       const output = await pool.query("select * from output where UserID = ? and Confirm IS NULL", req.decoded.UserID);
@@ -216,7 +220,7 @@ router.get('/outputlist', validate.isLoggedin, async (req, res) => {
    }
 });
 
-//출고 내역 리스트
+//출고 내역 리스트 출력
 router.get('/outputlists', validate.isLoggedin, async (req, res) => {
     try {
        const output = await pool.query("select * from output where UserID = ? and Confirm = 0", req.decoded.UserID);
@@ -226,7 +230,7 @@ router.get('/outputlists', validate.isLoggedin, async (req, res) => {
     }
  });
 
-//출고 리스트 (확정 전)
+//출고 리스트 (확정 전) 내역 출력
 router.get('/outputbeforelist', validate.isLoggedin, async (req, res) => {
     try {
        const output = await pool.query("select * from output where Confirm = 0 and UserID = ?", req.decoded.UserID);
@@ -236,7 +240,7 @@ router.get('/outputbeforelist', validate.isLoggedin, async (req, res) => {
     }
  });
 
-// 입출고 내역 내스트
+// 입출고 내역 (명세) 리스트 출력
 router.get('/inoutputlist', validate.isLoggedin, async (req, res) => {
    try {
       const inoutput = await pool.query("select InputID, InputDate, InputInfo, InputDIV from input where UserName = ? union select OutputID, OutputDate, OutputInfo, OutputDIV from output where UserName = ? order by inputdate desc;", 
@@ -247,7 +251,7 @@ router.get('/inoutputlist', validate.isLoggedin, async (req, res) => {
    }
 });
 
-//출고 대상 리스트
+//출고 대상 리스트 출력
 router.get('/moveoutput', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select * from output where InputStore = ? and Confirm = 0", req.decoded.UserInfo);
@@ -257,7 +261,7 @@ router.get('/moveoutput', validate.isLoggedin, async (req, res) => {
     }
  });
 
- //
+ // 출고 물품 세부 리스트 출력
 router.get('/detailmoveoutput', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select * from moveoutput where (UserID = ? or InputStore = ?) and Confirm = 0", [req.decoded.UserID, req.decoded.UserID]);
@@ -267,7 +271,7 @@ router.get('/detailmoveoutput', validate.isLoggedin, async (req, res) => {
     }
  });
 
-//입출고 내역 리스트
+// 입출고 내역 리스트 출력
 router.get('/alllist', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select * from output where (UserID = ? or InputStore = ?) and Confirm = 1", [req.decoded.UserID, req.decoded.UserInfo]);
@@ -277,7 +281,7 @@ router.get('/alllist', validate.isLoggedin, async (req, res) => {
     }
  });
 
- //입출고 물품 리스트
+ // 입출고 물품 리스트 출력
  router.get('/detailAllList', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select * from moveoutput where (UserID = ? or InputStore = ?) and Confirm = 1", [req.decoded.UserID, req.decoded.UserID]);
@@ -287,7 +291,7 @@ router.get('/alllist', validate.isLoggedin, async (req, res) => {
     }
  });
 
- //입출고 제품 수정 (덧셈)
+ //입출고 제품 연산 (덧셈)
 router.put('/plusmoveproduct', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -304,7 +308,7 @@ router.put('/plusmoveproduct', validate.isLoggedin, async (req, res) => {
     }
 });
 
-//입출고 제품 수정 (뺄셈)
+// 입출고 제품 연산 (뺄셈)
 router.put('/minusmoveproduct', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -321,7 +325,7 @@ router.put('/minusmoveproduct', validate.isLoggedin, async (req, res) => {
     }
 });
 
-//입출고 제품 삭제
+// 입출고 제품 삭제
 router.delete('/deleteMoveproduct', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -341,7 +345,7 @@ router.delete('/deleteMoveproduct', validate.isLoggedin, async (req, res) => {
     }
 });
 
-// 입출고 전 없는 제품의 여부 확인
+// 입출고 직전 제품이 DB상에 존재 하는지 여부 확인
  router.put('/findmoveoutput', validate.isLoggedin, async (req, res) => {
    try {
     const result = await pool.query("select A.* from Product  AS A INNER JOIN MoveOutput AS B on A.ProductID = B.ProductID where B.OutputID = ? and A.UserID != B.InputStore",
@@ -352,7 +356,7 @@ router.delete('/deleteMoveproduct', validate.isLoggedin, async (req, res) => {
     }
 });
 
- // 제품과 속성 등록
+ // 제품이 DB에 없다면 제품과 속성 자동 등록
 router.post('/addProduct', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
     // const BCnumber = BarcordNumber(2011111111111,2099999999999);
@@ -373,7 +377,7 @@ router.post('/addProduct', validate.isLoggedin, async (req, res) => {
     }
 });
 
-// 출고 확정 처리
+// 출고 최종 확정 처리
 router.put('/updateoutputProduct', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -393,7 +397,7 @@ router.put('/updateoutputProduct', validate.isLoggedin, async (req, res) => {
     }
 });
 
-// 입고 확정 처리
+// 입고 최종 확정 처리
 router.post('/updateProduct', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -410,15 +414,6 @@ router.post('/updateProduct', validate.isLoggedin, async (req, res) => {
     }
 });
 
-router.get('/testList', validate.isLoggedin, async (req, res) => {
-    try {
-        const result = await pool.query("select A.* from Product AS A INNER JOIN MoveOutput AS B on A.ProductID = B.ProductID where B.OutputID = ? and A.UserID != B.InputStore", req.params.OutputID)
-       return res.status(200).json({ result: result[0] });
-    } catch (e) {
-       throw e;
-    }
- });
-
  //출고 상세내역 리스트
 router.get('/outnputdetaillist', validate.isLoggedin, async (req, res) => {
     try {
@@ -429,7 +424,7 @@ router.get('/outnputdetaillist', validate.isLoggedin, async (req, res) => {
     }
  });
 
- // 출고 확정 날짜 추가
+ // 출고 확정 날짜 자동 할당
 router.put('/updatetime', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -447,7 +442,7 @@ router.put('/updatetime', validate.isLoggedin, async (req, res) => {
     }
 });
 
-//Inputstore가 나만
+// 입고 확정 여부 상태를 본인만 확인할 수 있게 출력
 router.get('/OnlyMeInputList', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select * from output where InputStore = ? and Confirm = 1", [req.decoded.UserInfo]);
@@ -457,7 +452,7 @@ router.get('/OnlyMeInputList', validate.isLoggedin, async (req, res) => {
     }
  });
 
- //Outputstore가 나만
+ // 출고 확정 여부 상태를 본인만 확인할 수 있게 출력
 router.get('/OnlyMeOutputList', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select * from output where UserID= ? and Confirm = 1", [req.decoded.UserID]);
@@ -467,7 +462,7 @@ router.get('/OnlyMeOutputList', validate.isLoggedin, async (req, res) => {
     }
  });
 
- //Inputstore가 나만 (MoveOutput)
+ // 출고 물품을 본인만 확인할 수 있게 출력
 router.get('/OnlyMeMoveInputList', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select ProductName, ProductCode, sum(salesCount)as Count from Moveoutput where InputStore =?  and Confirm = 1 group by ProductCode order by Count desc;", [req.decoded.UserID]);
@@ -477,7 +472,7 @@ router.get('/OnlyMeMoveInputList', validate.isLoggedin, async (req, res) => {
     }
  });
 
- //Outputstore가 나만 (MoveOutput)
+ // 입고 물품을 본인만 확인할 수 있게 출력
 router.get('/OnlyMeMoveOutputList', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select ProductName, ProductCode, sum(salesCount)as Count from Moveoutput where UserID =?  and Confirm = 1 group by ProductCode order by Count desc;", [req.decoded.UserID]);
@@ -487,7 +482,7 @@ router.get('/OnlyMeMoveOutputList', validate.isLoggedin, async (req, res) => {
     }
  });
 
-  //매장 별 판매 상황
+  // 매장 별 판매 상황을 출력
 router.get('/TotalCalcList', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select '일매출' as Temp, A.UserInfo as Info, A.UserAddress, DATE_FORMAT(B.SalesDate, '%Y-%m-%d') as Dates, sum(B.SalesPrice) as Price, sum(B.SalesCount) as Count from User as A inner join Sales as B on A.UserID = B.UserID where DATE_FORMAT(DATE_SUB(B.SalesDate, INTERVAL 9 HOUR), '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d') and UserCode = ? group by Info union select '월매출' as Temp, A.UserInfo as Info, A.UserAddress, DATE_FORMAT(B.SalesDate, '%Y-%m-%d') as Dates, sum(B.SalesPrice) as Price, sum(B.SalesCount) as Count from User as A inner join Sales as B on A.UserID = B.UserID where DATE_FORMAT(DATE_SUB(B.SalesDate, INTERVAL 9 HOUR), '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') and UserCode = ? group by Info;", [req.decoded.UserCode, req.decoded.UserCode]);
@@ -497,7 +492,7 @@ router.get('/TotalCalcList', validate.isLoggedin, async (req, res) => {
     }
  });
 
-   //입고
+   // 입고 내역을 날짜에 맞게 묶어 출력
 router.get('/InputCalcList', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select '입고' as Temp, A.UserInfo as Info, sum(B.Confirm) as Count, A.UserAddress, DATE_FORMAT(B.InputDate, '%Y-%m-%d') as Dates from User as A left outer join Output as B on A.UserInfo = B.InputStore where DATE_FORMAT(DATE_SUB(B.InputDate, INTERVAL 9 HOUR), '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d') and B.UserCode = ? and B.Confirm = 1 group by Info;", [req.decoded.UserCode]);
@@ -507,7 +502,7 @@ router.get('/InputCalcList', validate.isLoggedin, async (req, res) => {
     }
  });
 
-   //출고
+   // 출고 내역을 날짜에 맞게 묶어 출력
 router.get('/OutputCalcList', validate.isLoggedin, async (req, res) => {
     try {
        const result = await pool.query("select '출고' as Temp, A.UserInfo as Info, A.UserAddress, sum(B.Confirm) as Count, B.UserType, DATE_FORMAT(B.OutputDate, '%Y-%m-%d') as Dates from User as A inner join Output as B on A.UserInfo = B.OutputStore where DATE_FORMAT(DATE_SUB(B.OutputDate, INTERVAL 9 HOUR), '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d') and B.UserCode = ? and B.Confirm = 1 group by Info;", [req.decoded.UserCode]);
@@ -516,17 +511,5 @@ router.get('/OutputCalcList', validate.isLoggedin, async (req, res) => {
        throw e;
     }
  });
-/*
-        await con1.query("SET @CNT = 0");
- 
-        await con1.query("UPDATE PRODUCT SET PRODUCT.PRODUCTID = @CNT:=@CNT+1");
 
-        await con1.query("SET @CNT = 0");
- 
-        await con1.query("UPDATE PRODUCT SET PRODUCT.UserPID = @CNT:=@CNT+1 where UserID = ?", req.decoded.UserID);
-       // await con1.query(
-           // "INSERT INTO attribute VALUES(?, ?, ?, ?, ?, ?)",
-           // [ProductID, req.body.Opt1, req.body.Opt2, req.body.Opt3, req.body.Opt4, req.body.Opt5]
-      //  );
-*/
 module.exports = router;

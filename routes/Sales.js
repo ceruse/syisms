@@ -131,7 +131,7 @@ router.post('/addSales', validate.isLoggedin, async (req, res) => {
     }
 });
 
-// 판매시 추가 옵션 (movesales에 salesID 입력)
+// 판매시 추가 작업 (movesales에 salesID 입력하여 판매 물품과 판매 내역을 일치시킴)
 router.put('/updateSalesID', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
@@ -153,8 +153,8 @@ router.put('/updateCount', validate.isLoggedin, async (req, res) => {
     let con1 = await pool.getConnection(async (conn) => conn);
    try {
         con1.beginTransaction();
-        await con1.query("Update Product A inner join Movesales B on A.ProductName = B.ProductName set A.ProductCount = A.ProductCount - B.SalesCount where B.SalesID IS NULL",
-        )
+        await con1.query("Update Product A inner join Movesales B on A.ProductName = B.ProductName set A.ProductCount = A.ProductCount - B.SalesCount where A.UserID = ? and B.SalesID IS NULL",
+        req.decoded.UserID)
         con1.commit();
         res.status(200).json({ result: true, msg: "Minus Success" });
     } catch (e) {
@@ -165,7 +165,7 @@ router.put('/updateCount', validate.isLoggedin, async (req, res) => {
     }
 });
 
-// 제품 리스트 (내역)
+// 제품 리스트 출력
 router.get('/finalSalesList', validate.isLoggedin, async (req, res) => {
     try { 
         const Sales = await pool.query("select * from Sales where UserID =? and SalesID = ?", req.decoded.UserID, req.body.SalesID);
@@ -177,7 +177,7 @@ router.get('/finalSalesList', validate.isLoggedin, async (req, res) => {
     }
  });
 
-// 판매 제품 리스트 (내역)
+// 판매 제품 리스트 출력
 router.get('/finalmoveSalesList', validate.isLoggedin, async (req, res) => {
     try { 
         const Sales = await pool.query("select * from MoveSales where UserID =? and SalesID = ?", req.decoded.UserID, req.body.SalesID);
@@ -189,7 +189,7 @@ router.get('/finalmoveSalesList', validate.isLoggedin, async (req, res) => {
     }
  });
 
- // 제품 리스트 (전체 내역)
+ // 본인이 소유하고 있는 제품 리스트를 출력
 router.get('/SalesList', validate.isLoggedin, async (req, res) => {
     try { 
         const Sales = await pool.query("select * from Sales where UserID =?", req.decoded.UserID);
@@ -201,7 +201,7 @@ router.get('/SalesList', validate.isLoggedin, async (req, res) => {
     }
  });
 
-// 코드를 기준으로 전체 내역
+// 매장 고유 코드를 기준으로 전체 내역을 출력 (본사 전용)
  router.get('/TotalSalesList', validate.isLoggedin, async (req, res) => {
     try { 
         const Sales = await pool.query("select A.*, B.UserCode from Sales as A inner join User as B on A.UserID = B.UserID where B.UserCode = ?;", req.decoded.UserCode);
